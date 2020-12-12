@@ -6,7 +6,7 @@ module.exports={
         const{isAdmin,username,password} = req.body        
         let [existingUser] = await db.get_user([username])    
         if(existingUser){
-            res.status(409).send("username taken")
+        return res.status(409).send("username taken")
         }
         const salt=bcrypt.genSaltSync(10)
         const hash=bcrypt.hashSync(password, salt)
@@ -22,9 +22,9 @@ module.exports={
         const db=req.app.get('db')
         const {username,password} =req.body
         let [user]=await db.get_user([username])
-        if(!user) res.status(401).send("User not found. Please register first")
+        if(!user) return res.status(401).send("User not found. Please register first")
         const isAuthenticated=bcrypt.compareSync(password,user.hash)
-        if(!isAuthenticated) res.status(403).send("Wrong password")
+        if(!isAuthenticated) return res.status(403).send("Wrong password")
         req.session.user={
             isAdmin:user.is_admin,
             id:user.id,
